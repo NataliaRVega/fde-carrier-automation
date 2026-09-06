@@ -31,6 +31,19 @@ def complete_handoff(session: CallSession) -> dict:
         agreed_rate=session.agreed_rate,
     )
 
+    session.log_event(
+    	"HANDOFF_QUEUED",
+    	outcome="SUCCESS",
+    	metadata={
+        	"queue": result.queue,
+    		},
+	)
+
+    session.log_event(
+    	"CALL_COMPLETED",
+    	outcome="SUCCESS",
+	)
+
     session.move_to(CallState.COMPLETE)
 
     return result.model_dump()

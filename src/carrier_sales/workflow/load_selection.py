@@ -28,6 +28,10 @@ def select_load(
         )
 
     session.selected_load_id = load_id
+    session.log_event(
+   	 "LOAD_SELECTED",
+    	 outcome="SUCCESS",
+	)
     session.move_to(CallState.LOAD_PRESENTED)
 
     return session

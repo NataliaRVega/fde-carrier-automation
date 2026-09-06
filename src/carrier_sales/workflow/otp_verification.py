@@ -11,9 +11,17 @@ def run_otp_verification(
 
     if result.verified:
         session.otp_verified = True
+        session.log_event(
+            "OTP_VERIFIED",
+            outcome="SUCCESS",
+        )
         session.move_to(CallState.VERIFIED)
     else:
         session.otp_verified = False
+        session.log_event(
+            "OTP_FAILED",
+            outcome="FAILED",
+        )
         session.move_to(CallState.FAILED)
 
     return session

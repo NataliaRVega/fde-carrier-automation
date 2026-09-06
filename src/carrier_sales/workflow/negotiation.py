@@ -28,7 +28,6 @@ def begin_negotiation(session: CallSession) -> CallSession:
     session.current_broker_offer = float(
         internal_load.load.loadboard_rate
     )
-
     session.negotiation_round = 0
     session.move_to(CallState.NEGOTIATING)
 
@@ -74,6 +73,16 @@ def handle_carrier_offer(
 
     if decision.decision == "ACCEPT":
         session.agreed_rate = float(carrier_offer)
+
+        session.log_event(
+            "NEGOTIATION_ACCEPTED",
+            outcome="SUCCESS",
+            metadata={
+                "round": decision.round_number,
+                "carrier_offer": float(carrier_offer),
+            },
+        )
+
         session.move_to(CallState.BOOKING)
 
     elif decision.decision == "COUNTER":
@@ -81,7 +90,26 @@ def handle_carrier_offer(
             decision.offer_to_carrier
         )
 
+        session.log_event(
+            "NEGOTIATION_COUNTER",
+            outcome="CONTINUE",
+            metadata={
+                "round": decision.round_number,
+                "offer_to_carrier": float(
+                    decision.offer_to_carrier
+                ),
+            },
+        )
+
     elif decision.decision == "FAILED_MAX_ROUNDS":
+        session.log_event(
+            "NEGOTIATION_FAILED",
+            outcome="FAILED",
+            metadata={
+                "round": decision.round_number,
+            },
+        )
+
         session.move_to(CallState.FAILED)
 
     return decision.model_dump()

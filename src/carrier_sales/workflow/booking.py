@@ -18,8 +18,20 @@ def complete_booking(session: CallSession) -> dict:
     )
 
     if not result.success:
+        session.log_event(
+            "BOOKING_FAILED",
+            outcome="FAILED",
+        )
         session.move_to(CallState.FAILED)
         return result.model_dump()
+
+    session.log_event(
+        "BOOKING_CONFIRMED",
+        outcome="SUCCESS",
+        metadata={
+            "booking_id": result.booking_id,
+        },
+    )
 
     session.move_to(CallState.HANDOFF)
 

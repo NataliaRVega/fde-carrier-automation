@@ -8,6 +8,7 @@ def run_fmcsa_verification(
     mc_number: str,
 ) -> CallSession:
     session.carrier_mc = mc_number
+    session.log_event("FMCSA_CHECK_STARTED")
 
     session.move_to(CallState.FMCSA_PENDING)
 
@@ -15,9 +16,17 @@ def run_fmcsa_verification(
 
     if result.active_authority:
         session.fmcsa_verified = True
+        session.log_event(
+            "FMCSA_VERIFIED",
+            outcome="SUCCESS",
+        )
         session.move_to(CallState.OTP_PENDING)
     else:
         session.fmcsa_verified = False
+        session.log_event(
+            "FMCSA_REJECTED",
+            outcome="FAILED",
+        )
         session.move_to(CallState.FAILED)
 
     return session
