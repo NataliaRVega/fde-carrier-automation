@@ -1,7 +1,42 @@
 from datetime import datetime
 from decimal import Decimal
 
+from pydantic import BaseModel
+
 from carrier_sales.domain.models import InternalLoad, PublicLoad
+
+
+def normalize_equipment_type(value: str) -> str:
+    return (
+        value.strip()
+        .lower()
+        .replace("-", "_")
+        .replace(" ", "_")
+    )
+
+
+def normalize_location(value: str) -> str:
+    return (
+        value.strip()
+        .lower()
+        .replace(".", "")
+    )
+
+
+def location_matches(
+    stored_location: str,
+    requested_location: str,
+) -> bool:
+    stored = normalize_location(stored_location)
+    requested = normalize_location(requested_location)
+
+    if stored == requested:
+        return True
+
+    stored_city = stored.split(",")[0].strip()
+    requested_city = requested.split(",")[0].strip()
+
+    return stored_city == requested_city
 
 
 MOCK_LOADS = [
@@ -71,23 +106,39 @@ def search_loads(
 
     if origin:
         results = [
-            load for load in results
-            if load.load.origin.lower() == origin.lower()
+            load
+            for load in results
+            if location_matches(
+                load.load.origin,
+                origin,
+            )
         ]
 
     if destination:
         results = [
-            load for load in results
-            if load.load.destination.lower() == destination.lower()
+            load
+            for load in results
+            if location_matches(
+                load.load.destination,
+                destination,
+            )
         ]
 
     if equipment_type:
+        normalized_equipment = normalize_equipment_type(
+            equipment_type
+        )
+
         results = [
-            load for load in results
-            if load.load.equipment_type.lower() == equipment_type.lower()
+            load
+            for load in results
+            if normalize_equipment_type(
+                load.load.equipment_type
+            ) == normalized_equipment
         ]
 
     return results
+
 
 def get_load(load_id: str) -> InternalLoad | None:
     return next(
@@ -98,9 +149,6 @@ def get_load(load_id: str) -> InternalLoad | None:
         ),
         None,
     )
-
-
-from pydantic import BaseModel
 
 
 class BookingResult(BaseModel):
