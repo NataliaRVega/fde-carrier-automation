@@ -5,7 +5,6 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from decimal import Decimal
 from carrier_sales.domain.states import CallState
-from carrier_sales.workflow.session_store import get_session
 from carrier_sales.workflow.session_store import (
     get_or_create_session,
     get_session,
@@ -27,13 +26,18 @@ app = FastAPI(
     version="0.1.0",
 )
 
-API_TOKEN = os.getenv("CARRIER_SALES_API_TOKEN", "dev-secret-token")
+
 
 
 def require_api_token(
     authorization: str | None = Header(default=None),
 ) -> None:
-    expected = f"Bearer {API_TOKEN}"
+    api_token = os.getenv(
+        "CARRIER_SALES_API_TOKEN",
+        "dev-secret-token",
+    )
+
+    expected = f"Bearer {api_token}"
 
     if authorization != expected:
         raise HTTPException(

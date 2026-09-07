@@ -140,12 +140,10 @@ The system does not allow conversational instructions to bypass:
     The prototype is designed to remain platform-agnostic during development.
 
     *Conversational AI*
-    - Gemini
+    - HappyRobot
     - Function calling
     - Structured outputs
    
-    Gemini is currently used as the conversational AI layer while the core workflow is developed.
-    Eventually, the goal is to move it to the HappyRobot platform
 
     *Backend*
     - Python
@@ -183,7 +181,14 @@ The final implementation will map the platform-agnostic components to HappyRobot
  2.2 [Negotiation Policy] -> Rate, Rules
  2.3 [Booking Policy] -> TMS Integration
 
- 
+ # Known Prototype Limitations
+- FMCSA currently uses a deterministic mock implementation.
+- OTP verification currently uses a mock test code.
+- The HappyRobot OTP delivery integration still needs final SMS/email wiring.
+- The legacy TCP adapter is implemented but requires candidate-specific TMS hostname, port, and auth token for live validation.
+- Senior-representative transfer is mocked because Web Call transfers are not supported.
+- Docker files are complete but local execution is pending a required development-machine restart.
+- The HappyRobot operational App currently uses the generated server-first template connected to Twin and can be further customized for richer KPI visualization.
   
    
-    - 
+

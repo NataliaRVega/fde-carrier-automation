@@ -112,3 +112,9 @@ The current implementation successfully supports the main inbound carrier sales 
 
 Additional QA should be performed after the legacy TMS integration, endpoint authentication, and final HappyRobot Twin / Apps configuration are complete.
 
+## Automated Test Suite
+
+Final automated test run:
+
+```text
+25 passed, 1 warning

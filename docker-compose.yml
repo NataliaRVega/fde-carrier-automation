@@ -1,0 +1,16 @@
+services:
+  carrier-sales-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CARRIER_SALES_API_TOKEN: ${CARRIER_SALES_API_TOKEN}
+      TMS_MODE: ${TMS_MODE:-mock}
+      TMS_HOST: ${TMS_HOST:-}
+      TMS_PORT: ${TMS_PORT:-}
+      TMS_AUTH_TOKEN: ${TMS_AUTH_TOKEN:-}
+      TMS_TIMEOUT_SECONDS: ${TMS_TIMEOUT_SECONDS:-3}
+      TMS_MAX_RETRIES: ${TMS_MAX_RETRIES:-2}
+      TMS_BACKOFF_SECONDS: ${TMS_BACKOFF_SECONDS:-0.5}
